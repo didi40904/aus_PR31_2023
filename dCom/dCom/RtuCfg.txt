@@ -2,5 +2,5 @@ STA 183
 TCP 57173
  
 DO_REG  7 3500  0  0      1     0  DO  @DigOut  2
-IN_REG  1 3300  0  0   4095     0  AI  @AnaOut   2
+IN_REG  1 3300  0  0   4095     0  AI  @AnaIn   4
 HR_INT  1 4300  0  0   4095     0  AO  @AnaOut  4
