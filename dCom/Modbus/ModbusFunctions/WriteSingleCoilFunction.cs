@@ -22,17 +22,36 @@ namespace Modbus.ModbusFunctions
         }
 
         /// <inheritdoc />
-        public override byte[] PackRequest()
+        public override byte[] PackRequest()  
         {
-            //TO DO: IMPLEMENT
-            throw new NotImplementedException();
+            ModbusWriteCommandParameters zaPisanje = (ModbusWriteCommandParameters)CommandParameters;
+            byte[] niz = new byte[12];
+
+            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)zaPisanje.TransactionId)), 0, niz, 0, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)zaPisanje.ProtocolId)), 0, niz, 2, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)zaPisanje.Length)), 0, niz, 4, 2);
+            niz[6] = zaPisanje.UnitId;        
+            niz[7] = zaPisanje.FunctionCode;
+            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)zaPisanje.OutputAddress)), 0, niz, 8, 2);
+            Buffer.BlockCopy(BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)zaPisanje.Value)), 0, niz, 10, 2);
+
+            return niz;
         }
 
         /// <inheritdoc />
-        public override Dictionary<Tuple<PointType, ushort>, ushort> ParseResponse(byte[] response)
+        public override Dictionary<Tuple<PointType, ushort>, ushort> ParseResponse(byte[] response) 
         {
-            //TO DO: IMPLEMENT
-            throw new NotImplementedException();
+            ModbusWriteCommandParameters zaPisanje = (ModbusWriteCommandParameters)CommandParameters;
+
+            Dictionary<Tuple<PointType, ushort>, ushort> recnik = new Dictionary<Tuple<PointType, ushort>, ushort>();
+
+            ushort regAddress = (ushort)((response[8] << 8) | response[9]); 
+
+            ushort vrednost = (ushort)((response[10] << 8) | response[11]); 
+
+            recnik.Add(Tuple.Create(PointType.DIGITAL_OUTPUT, (ushort)regAddress), (ushort)vrednost);
+
+            return recnik;
         }
     }
 }
