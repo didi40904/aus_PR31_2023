@@ -48,16 +48,23 @@ namespace Modbus.ModbusFunctions
 
             ushort byteCount = response[8];
             ushort adresa = zaCitanje.StartAddress;
+            int cnt = 0;
 
             for (int i = 9; i < 9 + byteCount; i++)
             {
-                BitArray bits = new BitArray(new byte[] { response[i] });
+                byte tempByte = response[i];
                 for (int j = 0; j < 8; j++)
                 {
-                    ushort value = Convert.ToUInt16(bits[j]);
+                    ushort value = (ushort)(tempByte & 1);
+                    tempByte >>= 1;
                     recnik.Add(Tuple.Create(PointType.DIGITAL_OUTPUT, adresa), value);
                     adresa++;
+                    cnt++;
+                    if (cnt == zaCitanje.Quantity)
+                        break;
                 }
+                if (cnt == zaCitanje.Quantity)
+                    break;
             }
 
             return recnik;

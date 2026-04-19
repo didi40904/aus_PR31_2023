@@ -46,11 +46,11 @@ namespace Modbus.ModbusFunctions
             Dictionary<Tuple<PointType, ushort>, ushort> recnik = new Dictionary<Tuple<PointType, ushort>, ushort>();
 
             ushort byteCount = response[8];
-            ushort adresa = zaCitanje.StartAddress; 
+            ushort adresa = zaCitanje.StartAddress;
 
             for (int i = 9; i < 9 + byteCount; i += 2)
             {
-                ushort value = (ushort)((response[i] << 8) | response[i + 1]);   
+                ushort value = (ushort)IPAddress.NetworkToHostOrder((short)BitConverter.ToUInt16(response, i));
                 recnik.Add(Tuple.Create(PointType.ANALOG_OUTPUT, adresa), value);
                 adresa++;
             }

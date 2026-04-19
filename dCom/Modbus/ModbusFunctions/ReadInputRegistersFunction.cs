@@ -49,7 +49,7 @@ namespace Modbus.ModbusFunctions
 
             for (int i = 9; i < 9 + byteCount; i += 2)
             {
-                ushort value = (ushort)((response[i] << 8) | response[i + 1]);  
+                ushort value = (ushort)IPAddress.NetworkToHostOrder((short)BitConverter.ToUInt16(response, i));
                 recnik.Add(Tuple.Create(PointType.ANALOG_INPUT, adresa), value);
                 adresa++;
             }
