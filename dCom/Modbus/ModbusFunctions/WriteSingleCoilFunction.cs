@@ -42,14 +42,11 @@ namespace Modbus.ModbusFunctions
         public override Dictionary<Tuple<PointType, ushort>, ushort> ParseResponse(byte[] response) 
         {
             ModbusWriteCommandParameters zaPisanje = (ModbusWriteCommandParameters)CommandParameters;
-
             Dictionary<Tuple<PointType, ushort>, ushort> recnik = new Dictionary<Tuple<PointType, ushort>, ushort>();
 
-            ushort regAddress = (ushort)((response[8] << 8) | response[9]); 
-
-            ushort vrednost = (ushort)((response[10] << 8) | response[11]); 
-
-            recnik.Add(Tuple.Create(PointType.DIGITAL_OUTPUT, (ushort)regAddress), (ushort)vrednost);
+            ushort regAddress = (ushort)IPAddress.NetworkToHostOrder((short)BitConverter.ToUInt16(response, 8));
+            ushort vrednost = (ushort)IPAddress.NetworkToHostOrder((short)BitConverter.ToUInt16(response, 10));
+            recnik.Add(Tuple.Create(PointType.DIGITAL_OUTPUT, regAddress), vrednost);
 
             return recnik;
         }
