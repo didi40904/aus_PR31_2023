@@ -44,6 +44,7 @@ namespace ProcessingModule
         {
             if (configItem.RegistryType == PointType.ANALOG_OUTPUT)
             {
+                value = eguConverter.ConvertToRaw(configItem.ScaleFactor, configItem.Deviation, value); //raw konverzija
                 ExecuteAnalogCommand(configItem, transactionId, remoteUnitAddress, pointAddress, value);
             }
             else
@@ -142,8 +143,8 @@ namespace ProcessingModule
         {
             point.RawValue = newValue;
             point.Timestamp = DateTime.Now;
-            point.EguValue = eguConverter.ConvertToEGU(point.ConfigItem.ScaleFactor, point.ConfigItem.Deviation, newValue); //za alarm
             point.Alarm = alarmProcessor.GetAlarmForAnalogPoint(point.EguValue, point.ConfigItem); //za alarm
+            point.EguValue = eguConverter.ConvertToEGU(point.ConfigItem.ScaleFactor, point.ConfigItem.Deviation, newValue); //EGU konverzija
         }
 
         /// <inheritdoc />
